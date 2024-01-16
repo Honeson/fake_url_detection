@@ -5,6 +5,6 @@ scikit-learn
 seaborn
 matplotlib
 tldextract
-urllib
+urllib3
 googlesearch-python
 joblib
