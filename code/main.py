@@ -8,6 +8,7 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 import seaborn as sns
 import matplotlib.pyplot as plt
+import re
 
 import tldextract
 from urllib.parse import urlparse
@@ -18,7 +19,7 @@ import joblib
 import streamlit as st
 
 
-st.title('FAKE URL DETECTION')
+st.title('Fake Urls Detection by Yusuf (UNIPORT)')
 
 
 def letter_count(url):
@@ -70,8 +71,13 @@ def extract_features(url):
     return features
 
 
-
-
+#Check is the  url is valid or not
+def is_valid_url(url):
+    # Regular expression pattern for a more lenient URL validation
+    pattern = re.compile(r'^(https?://)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+    url = str(url)
+    # Check if the provided URL matches the pattern
+    return bool(pattern.match(url))
 
 
 def model_predict(model, url):
@@ -80,10 +86,13 @@ def model_predict(model, url):
         1: 'Not Scam'
     
     }
-    formated_url = extract_features(url)  
+    formated_url = extract_features(url)
+    
+    
     prediction = model.predict(np.array(list(formated_url.values())).reshape(1, -1))[0]
     prediction = class_mapping.get(prediction, 'Unkown')
     return prediction
+    
 
 def main():
 
@@ -103,15 +112,21 @@ def main():
         if model_path:
             model = joblib.load(model_path)
             input_url = st.text_input('Enter a website URL and our AI will tell you if it is scam or not')
+            
 
             if st.button('Check URL'):
                 if input_url:
                     st.write('Hang tight while we check if the URL is scam or not scam')
 
-                    prediction = model_predict(model, input_url)
+                    is_valid = is_valid_url(input_url)
+                    if is_valid:
 
-                    st.write(f'Entered URL: {input_url}')
-                    st.write(f'Result: {prediction}')
+                        prediction = model_predict(model, input_url)
+
+                        st.write(f'Entered URL: {input_url}')
+                        st.write(f'Result: {prediction}')
+                    else:
+                        st.warning('Inavlid url detected: Please a enter a valid url...')
 
 if __name__ == "__main__":
     main()
