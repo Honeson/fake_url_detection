@@ -126,7 +126,7 @@ def main():
                         st.write(f'Entered URL: {input_url}')
                         st.write(f'Result: {prediction}')
                     else:
-                        st.warning('Inavlid url detected: Please a enter a valid url...')
+                        st.warning('Inavlid url detected: Please enter a valid url...')
 
 if __name__ == "__main__":
     main()
